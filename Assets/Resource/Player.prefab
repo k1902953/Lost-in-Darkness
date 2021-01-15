@@ -256,6 +256,7 @@ MonoBehaviour:
   speed: 6
   gravity: 0
   jumpHeight: 3
+  groundCheck: {fileID: 0}
   groundDistance: 0.4
   groundMask:
     serializedVersion: 2
@@ -364,11 +365,25 @@ MonoBehaviour:
   speed: 6
   gravity: -9.81
   jumpHeight: 3
+  groundCheck: {fileID: 0}
   groundDistance: 0.4
   groundMask:
     serializedVersion: 2
     m_Bits: 0
   turnSmoothTime: 0.1
+--- !u!65 &5087466926574111128
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5614106705477453866}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 14.9, y: 10.5, z: 20}
+  m_Center: {x: -1.3, y: 6.85, z: 5.78}
 --- !u!1 &7741032530641420130
 GameObject:
   m_ObjectHideFlags: 0
@@ -531,6 +546,12 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 9500000, guid: 7aec4b0094d00df48a5ccd5b7f4c7f24, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7aec4b0094d00df48a5ccd5b7f4c7f24, type: 3}
+--- !u!1 &5614106705477453866 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100004, guid: 7aec4b0094d00df48a5ccd5b7f4c7f24,
+    type: 3}
+  m_PrefabInstance: {fileID: 5614106705477422734}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5614106705477030922 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400004, guid: 7aec4b0094d00df48a5ccd5b7f4c7f24,
