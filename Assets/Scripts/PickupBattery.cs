@@ -23,13 +23,10 @@ public class PickupBattery : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 Debug.Log("You get this battery: " + collider.gameObject.name);
-
                 // disable UI
                 collider.gameObject.GetComponent<PlayerBehaviour>().pickUpUI.SetActive(false);
-
                 // add battery value                
                 AddBattery(collider.gameObject, chargeValue);
-
                 // disable game object
                 this.gameObject.SetActive(false);
             }

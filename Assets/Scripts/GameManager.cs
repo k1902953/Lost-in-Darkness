@@ -14,10 +14,10 @@ public class GameManager : MonoBehaviour
     public int health = 100;           // the player health
     public bool gameover = false;     // a boolean to indicate the game over state
 
-    public int totalbatts = 0;       // Total number of batteries to collect
+    public int totalbatts;       // Total number of batteries to collect
     public int battscollected = 0;   // Number of batteries collected so far
 
-    public int totalpapers = 8;       // Total number of papers to collect
+    public int totalnotes;       // Total number of papers to collect
     public int papercollected = 0;   // Number of paper collected so far
 
     public static GameManager Instance
@@ -47,10 +47,27 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameovertxt.text = "";
+        setHealthText(health);
+        totalnotes = GameObject.FindObjectsOfType<PickupNotesTrigger>().Length;
+        totalbatts = GameObject.FindObjectsOfType<PickupBattery>().Length;
+        papertxt.text = "Notes: " + papercollected + "/" + totalnotes;
+        batterytxt.text = "Battries: " + battscollected + "/" + totalbatts;
     }
 
-    public void pickup()
+    public void pickupnote()
+    {
+        // Check that not game over
+        if (gameover) return;
+
+        // Add one to total number of keys collected
+        papercollected++;
+
+        // Update the text field 
+        papertxt.text = "Notes: " + papercollected + "/" + totalnotes;
+    }
+
+    public void pickupbatt()
     {
         // Check that not game over
         if (gameover) return;
@@ -58,8 +75,8 @@ public class GameManager : MonoBehaviour
         // Add one to total number of keys collected
         battscollected++;
 
-        // Update the text field to display the total number of collected keys in the form "Keys: ??"
-        batterytxt.text = "Battries: " + battscollected;
+        // Update the text field 
+        batterytxt.text = "Battries: " + battscollected + "/" + totalbatts;
     }
 
     // goalreached() should set the gameover to true, and set the game over
@@ -78,8 +95,11 @@ public class GameManager : MonoBehaviour
     // Set the game over state to true
     public void setGameOver()
     {
-        gameover = true;
-        gameovertxt.text = "GAME OVER!";
+        if (gameover == false)
+        {
+            gameover = true;
+            gameovertxt.text = "GAME OVER!";
+        }
     }
 
     // Set the health text
@@ -93,5 +113,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+       
     }
 }
