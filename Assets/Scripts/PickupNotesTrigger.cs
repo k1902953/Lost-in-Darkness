@@ -11,13 +11,9 @@ public class PickupNotesTrigger : MonoBehaviour
     {
         if (col.gameObject.transform.tag == "Player")
         {
-            //if (Input.GetKeyDown("c"))
-            //{
             GameManager.Instance.pickupnote();
             Destroy(transform.gameObject);
             Debug.Log("you picked up a note");
-            //}
-
         }
     }
 }

@@ -8,42 +8,39 @@ using UnityEngine.AI;
 
 public class EnemyControl : MonoBehaviour
 {
-    Animator anim;      // the animator
-    NavMeshAgent na;    // the nav mesh agent
-    public Transform target;        // the target (player)
+    public NavMeshAgent agent;     // the nav mesh agent
+    Animator anim;         // the animator
+    Transform target;        // the target (player)
     public Transform startbase;    // location crawler is at the start of the game
-    bool found = false;            // found player
+    public float lookradius = 10f;
 
     // Start is called before the first frame update
     void Start()
     {
-        na = GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+        target = PlayerManager.instance.player.transform;
     }
 
     // Update is called once per frame
     void Update()
     {
         // Detect the player
-        float enemydist = Vector3.Distance(target.transform.position, transform.position);
+        float enemydist = Vector3.Distance(target.position, transform.position);
+        anim.SetFloat("distance", enemydist);
 
         // Set fake distance if game over so enemy goes away
         if (GameManager.Instance.isGameOver())
         {
             enemydist = 10000;
-            na.SetDestination(startbase.transform.position);
-            na.isStopped = true;
-            na.speed = 0;
+            agent.SetDestination(startbase.transform.position);
+            agent.isStopped = true;
+            agent.speed = 0;
         }
 
-        //enemydist = 10000; //??
-
-        anim.SetFloat("EnemyDist", enemydist);
-
-        // Distance to the home base of the crawler NPC
-        float basedist = Vector3.Distance(startbase.transform.position, transform.position);
-
-        anim.SetFloat("BaseDist", basedist);
+        // Distance to the home base of the crawler 
+        float basedis = Vector3.Distance(startbase.transform.position, transform.position);
+        anim.SetFloat("basedis", basedis);
 
         // Determine which state crawler is in
         AnimatorStateInfo asi = anim.GetCurrentAnimatorStateInfo(0);
@@ -51,43 +48,61 @@ public class EnemyControl : MonoBehaviour
         // If crawler is in Attack state
         if (asi.IsName("attack"))
         {
-            na.isStopped = true;
-            na.velocity = Vector3.zero;
+            agent.isStopped = true;
+            agent.velocity = Vector3.zero;
         }
 
         // If crawler is in run state
         if (asi.IsName("crawl_fast"))
         {
-            na.SetDestination(target.position);
-            na.isStopped = false;
+            //agent.SetDestination(target.position);
+            agent.isStopped = false;
         }
 
         // If crawler is in back to base state
         if (asi.IsName("crawl"))
         {
-            na.SetDestination(startbase.position);
-            na.isStopped = false;
+            //agent.SetDestination(startbase.position);
+            agent.isStopped = false;
         }
 
         // If crawler is in idle state
         if (asi.IsName("Idle"))
         {
-            na.isStopped = true;
+            agent.isStopped = true;
         }
 
-        if (!found && Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position) < 2)
+        if (enemydist <= lookradius)
         {
-            found = true;
-        }
-
-        if (found)
-        {
-            na.SetDestination(GameObject.FindGameObjectWithTag("Player").transform.position);
-            anim.SetFloat("EnemyDist", Vector3.Distance(transform.position, GameObject.FindGameObjectWithTag("Player").transform.position));
+            agent.SetDestination(target.position);
+            anim.SetFloat("distance", Vector3.Distance(transform.position, target.position));
+            if (enemydist <= agent.stoppingDistance)
+            {
+                FaceTarget();
+            }
         }
         else
         {
-            na.SetDestination(startbase.transform.position);
+            agent.SetDestination(startbase.transform.position);
+            anim.SetFloat("basedis", Vector3.Distance(transform.position, startbase.transform.position));
         }
+    }
+    void FaceTarget()
+    {
+        Vector3 direction = (target.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        //lookRotation.x = 10.0f;
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+
+        //Quaternion rotation = Quaternion.LookRotation(direction);
+        //transform.rotation = rotation;
+    }
+    public void Hit()
+    {
+        /*Debug.Log("exo is attacking");
+
+        // tell the attacked game object it has been attacked
+        GameManager.Instance.SendMessage("EnemyAttack", null, SendMessageOptions.DontRequireReceiver);*/
     }
 }
