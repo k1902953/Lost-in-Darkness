@@ -8,13 +8,12 @@ public class PickupBattery : MonoBehaviour
     {
         if (col.gameObject.transform.tag == "Player")
         {
-            //if (Input.GetKeyDown("c"))
-            //{
-            GameManager.Instance.pickupbatt();
-            Destroy(transform.gameObject);
-            Debug.Log("you picked up a battery");
-            //}
-
+            if (Input.GetKey(KeyCode.C))
+            {
+                GameManager.Instance.pickupbatt();
+                Destroy(transform.gameObject);
+                Debug.Log("you picked up a battery");
+            }
         }
     }
 }

@@ -8,14 +8,18 @@ using UnityEngine.AI;
 
 public class EnemyControl : MonoBehaviour
 {
-    public NavMeshAgent agent;     // the nav mesh agent
+    NavMeshAgent agent;     // the nav mesh agent
     Animator anim;         // the animator
-    Transform target;        // the target (player)
-    public Transform startbase;    // location crawler is at the start of the game
-    public float lookradius = 10f;
+    Transform target;               // the target (player)
+    public float lookradius = 14f;
+    //
+    public LayerMask ground;
+    public Vector3 walkPoint;
+    bool walkPointSet;
+    public float walkPointRange = 5;
 
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
@@ -33,14 +37,8 @@ public class EnemyControl : MonoBehaviour
         if (GameManager.Instance.isGameOver())
         {
             enemydist = 10000;
-            agent.SetDestination(startbase.transform.position);
             agent.isStopped = true;
-            agent.speed = 0;
         }
-
-        // Distance to the home base of the crawler 
-        float basedis = Vector3.Distance(startbase.transform.position, transform.position);
-        anim.SetFloat("basedis", basedis);
 
         // Determine which state crawler is in
         AnimatorStateInfo asi = anim.GetCurrentAnimatorStateInfo(0);
@@ -55,14 +53,12 @@ public class EnemyControl : MonoBehaviour
         // If crawler is in run state
         if (asi.IsName("crawl_fast"))
         {
-            //agent.SetDestination(target.position);
             agent.isStopped = false;
         }
 
         // If crawler is in back to base state
         if (asi.IsName("crawl"))
         {
-            //agent.SetDestination(startbase.position);
             agent.isStopped = false;
         }
 
@@ -76,6 +72,7 @@ public class EnemyControl : MonoBehaviour
         {
             agent.SetDestination(target.position);
             anim.SetFloat("distance", Vector3.Distance(transform.position, target.position));
+            
             if (enemydist <= agent.stoppingDistance)
             {
                 FaceTarget();
@@ -83,26 +80,52 @@ public class EnemyControl : MonoBehaviour
         }
         else
         {
-            agent.SetDestination(startbase.transform.position);
-            anim.SetFloat("basedis", Vector3.Distance(transform.position, startbase.transform.position));
+            Patroling();   
         }
+        
     }
-    void FaceTarget()
+    public void FaceTarget()
     {
         Vector3 direction = (target.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        //lookRotation.x = 10.0f;
-
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-
-        //Quaternion rotation = Quaternion.LookRotation(direction);
-        //transform.rotation = rotation;
+        Quaternion rotation = Quaternion.LookRotation(direction);
+        transform.rotation = rotation;
+        
     }
+    
     public void Hit()
     {
-        /*Debug.Log("exo is attacking");
-
         // tell the attacked game object it has been attacked
-        GameManager.Instance.SendMessage("EnemyAttack", null, SendMessageOptions.DontRequireReceiver);*/
+        GameManager.Instance.SendMessage("EnemyAttack", null, SendMessageOptions.DontRequireReceiver);
+    }
+
+    public void Patroling()
+    {
+        if(!walkPointSet)
+        {
+            SearchWalkPoint();
+        }
+        if (walkPointSet)
+        {
+            agent.SetDestination(walkPoint);
+        }
+
+        Vector3 distanceToWalkPoint = transform.position - walkPoint;
+
+        //walk point reached
+        if(distanceToWalkPoint.magnitude < 10f)
+        {
+            walkPointSet = false;
+        }
+    }
+    public void SearchWalkPoint()
+    {
+        float xrandom = Random.Range(-walkPointRange, walkPointRange);
+        float zrandom = Random.Range(-walkPointRange, walkPointRange);
+
+        walkPoint = new Vector3(transform.position.x + xrandom, transform.position.y, transform.position.z + zrandom);
+        if(Physics.Raycast(walkPoint, -transform.up, 2f, ground))
+        {
+            walkPointSet = true;
+        }
     }
 }

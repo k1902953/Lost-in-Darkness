@@ -9,16 +9,15 @@ public class GameManager : MonoBehaviour
     public TMP_Text batterytxt;        // Text field for the batteries collected
     public TMP_Text papertxt;          // Text field for the papers collected
     public TMP_Text gameovertxt;       // Text field for game over text
-    public TMP_Text healthtxt;         // Text field for the health text
-
-    public int health = 100;           // the player health
-    public bool gameover = false;     // a boolean to indicate the game over state
+    public bool gameover = false;      // a boolean to indicate the game over state
 
     public int totalbatts;       // Total number of batteries to collect
     public int battscollected = 0;   // Number of batteries collected so far
 
     public int totalnotes;       // Total number of papers to collect
     public int papercollected = 0;   // Number of paper collected so far
+    public ProgressBar health;
+    public int healthValue = 100;
 
     public static GameManager Instance
     {
@@ -47,8 +46,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //FindObjectOfType<DialogueTrigger>().TriggerDialogue();
+        StartCoroutine(addHealth());
         gameovertxt.text = "";
-        setHealthText(health);
+        health.BarValue = healthValue;
         totalnotes = GameObject.FindObjectsOfType<PickupNotesTrigger>().Length;
         totalbatts = GameObject.FindObjectsOfType<PickupBattery>().Length;
         papertxt.text = "Notes: " + papercollected + "/" + totalnotes;
@@ -99,20 +100,45 @@ public class GameManager : MonoBehaviour
         {
             gameover = true;
             gameovertxt.text = "GAME OVER!";
+           
         }
     }
 
-    // Set the health text
-    public void setHealthText(int health)
+    public void EnemyAttack()
     {
-        healthtxt.text = "Health: " + health;
+        Debug.Log("ouch - player is attacked");
+        healthValue = healthValue - 6;
+        if (healthValue < 0) healthValue = 0;
+        health.BarValue = healthValue;
+        if (healthValue <= 0)
+        {
+            setGameOver();
+        }
     }
 
+    IEnumerator addHealth()
+    {
+        while (true)
+        {
+            if (healthValue < 100)
+            {
+                healthValue += 1;
+                health.BarValue = healthValue;
+                yield return new WaitForSeconds(1);
+            }
+            else
+            { // if health >= 100, just yield 
+                yield return null;
+            }
+        }
+    }
 
     // Update is called once per frame
     void Update()
     {
-        
-       
+        if (Input.GetKey(KeyCode.X))
+        {
+            FindObjectOfType<DialogueManager>().DisplayNextSentence();
+        }
     }
 }
