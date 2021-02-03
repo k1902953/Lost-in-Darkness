@@ -1,5 +1,4 @@
-﻿// #NVJOB Nicholas Veselov - https://nvjob.github.io
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine;
@@ -38,8 +37,6 @@ public class Slender : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
 
     }
-
-    
 
     void Update()
     {

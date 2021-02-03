@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     public int papercollected = 0;   // Number of paper collected so far
     public ProgressBar health;
     public int healthValue = 100;
+    public int level = 1;
+    public GameObject completeLevelUI;
 
     public static GameManager Instance
     {
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         //FindObjectOfType<DialogueTrigger>().TriggerDialogue();
         StartCoroutine(addHealth());
         gameovertxt.text = "";
@@ -66,6 +69,20 @@ public class GameManager : MonoBehaviour
 
         // Update the text field 
         papertxt.text = "Notes: " + papercollected + "/" + totalnotes;
+        if (battscollected == totalbatts && papercollected == totalnotes)
+        {
+            if (level < 3)
+            {
+                level++;
+                CompleteLevel();
+                
+            }
+            else
+            {
+                goalreached();
+                Debug.Log("You Won");
+            }
+        }
     }
 
     public void pickupbatt()
@@ -78,6 +95,24 @@ public class GameManager : MonoBehaviour
 
         // Update the text field 
         batterytxt.text = "Battries: " + battscollected + "/" + totalbatts;
+        if (battscollected == totalbatts && papercollected == totalnotes)
+        {
+            if (level < 3)
+            {
+                CompleteLevel();
+                level++;
+            }
+            else
+            {
+                goalreached();
+                Debug.Log("You Won");
+            }
+        }
+    }
+
+    public void CompleteLevel()
+    {
+        completeLevelUI.SetActive(true);
     }
 
     // goalreached() should set the gameover to true, and set the game over
@@ -152,5 +187,7 @@ public class GameManager : MonoBehaviour
         {
             FindObjectOfType<DialogueManager>().DisplayNextSentence();
         }
+
+        
     }
 }

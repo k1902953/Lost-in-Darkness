@@ -4,41 +4,62 @@ using UnityEngine;
 
 public class Spawn : MonoBehaviour
 {
+    public GameManager gameManager;
     public GameObject enemy; //crawler
     public GameObject pparent; //pages
     public GameObject houseTrigger;
     public int xPos;
     public int zPos;
     public int enemyCount;
+    int enemyCountMax;
 
     // Start is called before the first frame update
     void Start()
     {
-        enemy.SetActive(false); //make orginal enemy invisible
-        for (int i=1; i < pparent.transform.childCount; i++)
+        if ( gameManager.level == 1)
         {
-            pparent.transform.GetChild(i).gameObject.SetActive(false);
+            enemyCountMax = 20;
+            enemy.SetActive(false); //make orginal enemy invisible
+            for (int i = 1; i < pparent.transform.childCount; i++)
+            {
+                pparent.transform.GetChild(i).gameObject.SetActive(false);
+            }
         }
         houseTrigger.SetActive(false);
+        if (gameManager.level == 2)
+        {
+            enemyCountMax = 25;
+        }
+        if (gameManager.level == 3)
+        {
+            enemyCountMax = 35;
+        }
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
-            houseTrigger.SetActive(true);
-            enemy.SetActive(true);
-            for (int i = 0; i < pparent.transform.childCount; i++)
+            if (gameManager.level == 1)
             {
-                pparent.transform.GetChild(i).gameObject.SetActive(true);
+                houseTrigger.SetActive(true);
+                enemy.SetActive(true);
+                for (int i = 0; i < pparent.transform.childCount; i++)
+                {
+                    pparent.transform.GetChild(i).gameObject.SetActive(true);
+                }
+                StartCoroutine(EnemyDrop());
             }
-            StartCoroutine(EnemyDrop());
+            else
+            {
+                StartCoroutine(EnemyDrop());
+            }
         }
     }
 
     IEnumerator EnemyDrop()
     {
-        while(enemyCount < 15)
+        while(enemyCount < enemyCountMax)
         {
             xPos = Random.Range(-75, -15);
             zPos = Random.Range(547, 700);
@@ -47,7 +68,7 @@ public class Spawn : MonoBehaviour
             enemyCount += 1;
         }
         enemyCount = 0;
-        while (enemyCount < 15)
+        while (enemyCount < enemyCountMax)
         {
             xPos = Random.Range(64, 100);
             zPos = Random.Range(564, 683);
@@ -55,7 +76,8 @@ public class Spawn : MonoBehaviour
             yield return
             enemyCount += 1;
         }
-        Destroy(transform.gameObject); //once collided box is destroyed
+        //Destroy(transform.gameObject); //once collided box is destroyed
+        transform.gameObject.SetActive(false);
     }
 
 }

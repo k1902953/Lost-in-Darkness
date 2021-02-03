@@ -14,10 +14,13 @@ public class PickupNotesTrigger : MonoBehaviour
             if (col.gameObject.transform.tag == "Player")
             {
                 GameManager.Instance.pickupnote();
-                Destroy(transform.gameObject);
+                //Destroy(transform.gameObject);
+                transform.gameObject.SetActive(false);
                 Debug.Log("you picked up a note");
-                //FindObjectOfType<DialogueTrigger>().TriggerDialogue();
-                FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
+                if (dialogue != null)
+                {
+                    FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
+                }
             }
         }
     }
