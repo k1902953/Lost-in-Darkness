@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 public class PickupNotesTrigger : MonoBehaviour
 {
+    public Dialogue dialogue;
     void OnTriggerEnter(Collider col)
     {
         if (Input.GetKey(KeyCode.C))
@@ -15,7 +16,8 @@ public class PickupNotesTrigger : MonoBehaviour
                 GameManager.Instance.pickupnote();
                 Destroy(transform.gameObject);
                 Debug.Log("you picked up a note");
-                FindObjectOfType<DialogueTrigger>().TriggerDialogue(2);
+                //FindObjectOfType<DialogueTrigger>().TriggerDialogue();
+                FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
             }
         }
     }

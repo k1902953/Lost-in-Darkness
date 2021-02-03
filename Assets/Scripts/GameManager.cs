@@ -116,15 +116,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SlenderAttack()
+    {
+        Debug.Log("ouch - player took damage");
+        healthValue = healthValue - 50;
+        if (healthValue < 0) healthValue = 0;
+        health.BarValue = healthValue;
+        if (healthValue <= 0)
+        {
+            setGameOver();
+        }
+    }
+
     IEnumerator addHealth()
     {
-        while (true)
+        while (true && gameover == false)
         {
             if (healthValue < 100)
             {
                 healthValue += 1;
                 health.BarValue = healthValue;
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(1.5f);
             }
             else
             { // if health >= 100, just yield 

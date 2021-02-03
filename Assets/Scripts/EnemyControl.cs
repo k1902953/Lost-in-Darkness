@@ -10,7 +10,7 @@ public class EnemyControl : MonoBehaviour
 {
     NavMeshAgent agent;     // the nav mesh agent
     Animator anim;         // the animator
-    Transform target;               // the target (player)
+    Transform target;        // the target (player)
     public float lookradius = 14f;
     //
     public LayerMask ground;

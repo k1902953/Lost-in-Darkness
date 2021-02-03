@@ -6,8 +6,10 @@ public class PlayerMove : MonoBehaviour
 {
     public CharacterController controller;
 
+    private Animation ani;
+
     public float RunMultiplier = 0.002f;   // Speed when sprinting
-    public float speed = 6f;
+    public float speed;
     public float gravity = -9.81f;
     public float jumpHeight = 1f;
 
@@ -17,7 +19,12 @@ public class PlayerMove : MonoBehaviour
     bool isGrounded;
 
     public Vector3 velocity;
-    public KeyCode RunKey;
+    //public KeyCode RunKey;
+
+    void Start()
+    {
+        ani = gameObject.GetComponent<Animation>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -35,12 +42,16 @@ public class PlayerMove : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             speed *= RunMultiplier;
+            //this.gameObject.GetComponent<Animation>().CrossFade("Run", 1);
+            ani.Play("Run");
         }
         if(!Input.GetMouseButtonDown(0))
         {
             speed = 6f;
+            //this.gameObject.GetComponent<Animation>().CrossFade("Idle", 1);
+            ani.Play("Idle");
         }
-
+        
         isGrounded = Physics.CheckSphere(gCheck.position, gDistance, gMask);
         if (isGrounded && velocity.y <0)
         {

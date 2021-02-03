@@ -6,6 +6,7 @@ public class Spawn : MonoBehaviour
 {
     public GameObject enemy; //crawler
     public GameObject pparent; //pages
+    public GameObject houseTrigger;
     public int xPos;
     public int zPos;
     public int enemyCount;
@@ -14,16 +15,18 @@ public class Spawn : MonoBehaviour
     void Start()
     {
         enemy.SetActive(false); //make orginal enemy invisible
-        for (int i=2; i < pparent.transform.childCount; i++)
+        for (int i=1; i < pparent.transform.childCount; i++)
         {
             pparent.transform.GetChild(i).gameObject.SetActive(false);
         }
+        houseTrigger.SetActive(false);
     }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Player")
         {
+            houseTrigger.SetActive(true);
             enemy.SetActive(true);
             for (int i = 0; i < pparent.transform.childCount; i++)
             {

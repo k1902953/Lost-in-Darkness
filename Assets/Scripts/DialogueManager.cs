@@ -9,8 +9,8 @@ public class DialogueManager : MonoBehaviour
     public TMP_Text dtext;
     private Queue<string> sentences;
     public Animator ani;
-    public GameObject start;
-    public GameObject page;
+    //public Dialogue dialogue;
+    public float responseTracker;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,28 +18,46 @@ public class DialogueManager : MonoBehaviour
         //FindObjectOfType<DialogueTrigger>().TriggerDialogue(1);
     }
 
-    public void StartDialogue(Dialogue dialogue, int go)
+    public void StartDialogue(Dialogue dialogue)
+    {
+        //Reset();
+        ani.SetBool("isOpen", true);
+        sentences.Clear();
+        Debug.Log(dialogue.sentences[0]);
+
+        foreach (string sentence in dialogue.sentences)
+        {
+            //dtext.text = dialogue.sentences[0];
+            sentences.Enqueue(sentence);
+        }
+        /*if (responseTracker == 0 && dialogue.sentences.Length >=0)
+        {
+            dtext.text = dialogue.sentences[0];
+            foreach (string sentence in dialogue.sentences)
+            {
+                sentences.Enqueue(sentence);
+            }
+           
+        }
+        else if(responseTracker == 1 && dialogue.sentences.Length >= 1)
+        {
+            dtext.text = dialogue.sentences[1];
+            Debug.Log(dialogue.sentences[1]);
+        }*/
+        /*else if (responseTracker == 2 && dialogue.sentences.Length >= 2)
+        {
+            dtext.text = dialogue.sentences[2];
+
+        }*/
+        DisplayNextSentence();
+    }
+
+    void Reset()
     {
         ani.SetBool("isOpen", true);
         sentences.Clear();
-        if (go == 1)
-        {
-            foreach (string sentence in dialogue.sentences)
-            {
-                Debug.Log(gameObject);
-                sentences.Enqueue(sentence);
-            }
-            DisplayNextSentence();
-        }
-        if (go == 2)
-        {
-            foreach (string sentence in dialogue.sentences)
-            {
-                Debug.Log(gameObject);
-                sentences.Enqueue(sentence);
-            }
-            DisplayNextSentence();
-        }
+        responseTracker = 0;
+        //dtext.text = dialogue.sentences[0];
     }
 
     public void DisplayNextSentence()
@@ -50,12 +68,9 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
             return;
         }
-        //if (Input.GetKey(KeyCode.X))
-        //{
         string sentence = sentences.Dequeue();
         StopAllCoroutines();
         StartCoroutine(TypeSentence(sentence));
-        //}
     }
 
     IEnumerator TypeSentence (string sentence)
